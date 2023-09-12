@@ -1,16 +1,16 @@
 import tv from "../assets/tv.svg";
 import home from "../assets/home.svg";
 import logout from "../assets/logout.svg";
-import calendar from "../assets/calendar.svg";
 import movieProjector from "../assets/movieProjector.svg";
+import calendar from "../assets/calendar.svg";
 import tvShow from "../assets/tvShow.svg";
-import {Link, NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 
 const SideMenu = () => {
   return (
     <aside className="fixed  h-screen w-[226px] border border-[#00000030] rounded-r-[45px]">
       <nav className="w-full flex flex-col items-center">
-        <Link to='/' className="flex flex-row items-center gap-x-[24px] mt-10">
+        <Link to="/" className="flex flex-row items-center gap-x-[24px] mt-10">
           <img className="h-[50px] " src={tv} alt={`${tv} svg`} />
           <h2 className="font-[700] text-[24px] leading-[24px] text-[#333333]">
             MovieBox
