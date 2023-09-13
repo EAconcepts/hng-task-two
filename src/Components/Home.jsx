@@ -1,18 +1,27 @@
 import React, { useEffect, useState } from "react";
 import tv from "../assets/tv.svg";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css'
 import SearchResult from "./SearchResult";
 import MovieCard from "./MovieCard";
 import { Oval } from "react-loader-spinner";
+import imdb from "../assets/imdb.svg";
+import tomato from "../assets/tomato.svg";
 
 const Home = () => {
   const [searchText, setSearchText] = useState("");
+  const [searchFocus, setSearchFocus] = useState(false)
   const [topRated, setTopRated] = useState(null);
   const [searchResult, setSearchResult] = useState(null);
   const [isPending, setIsPending] = useState(false);
+  const [heroErr, setHeroErr] = useState(null);
+  const [err, setErr] = useState(null);
+  const [searchErr, setSearchErr] = useState(null);
+  const [heroMovie, setHeroMovie] = useState(null);
   const notify = (text) => toast(text);
+  const navigateTo= useNavigate()
   const OnSearchChange = (event) => {
     setSearchText(event.target.value);
   };
@@ -40,52 +49,83 @@ const Home = () => {
         })
         .catch((error) => {
           console.log(error);
+          setSearchErr(`${error.message}!`)
           setIsPending(false);
         });
     }
   };
-
-  //   useEffect(() => {
-  //
-  //     axios
-  //       .get(
-  //         "https://api.themoviedb.org/3/movie/top_rated?language=en-US&page=1",
-  //         { headers }
-  //       )
-  //       .then((response) => {
-  //             if(response.status===200){
-  //         console.log(response);
-  //         setTopRated(response.data.results.slice(0, 10));
-  //       }
-  //             else {
-  //                 notify("Error fetching top rated movies")
-  //             }
-  //         })
-  //       .catch((error) => console.log(error));
-  //   }, []);
+  useEffect(() => {
+    axios
+      .get("https://api.themoviedb.org/3/search/movie?query=john%20wick%203", {
+        headers,
+      })
+      .then((response) => {
+        console.log(response);
+        setHeroMovie(response.data.results);
+      })
+      .catch((error) => {
+        setHeroErr(`${error.message}!`)
+        console.log(error);
+      });
+  }, []);
+  useEffect(() => {
+    setIsPending(true)
+    axios
+      .get(
+        "https://api.themoviedb.org/3/movie/top_rated?language=en-US&page=1",
+        { headers }
+      )
+      .then((response) => {
+        if (response.status === 200) {
+          console.log(response);
+          setTopRated(response.data.results.slice(0, 10));
+        } 
+        setIsPending(false)
+      })
+      .catch((error) =>{ console.log(error)
+        // let text = `${error.message}!`;
+        setErr(`${error.message}!`)
+        // notify(text);
+        setIsPending(false)
+    });
+  }, []);
   console.log(searchResult);
 
+  let imgUrl = `https://image.tmdb.org/t/p/original${
+    heroMovie && heroMovie[0].backdrop_path
+  }`;
+  console.log(imgUrl);
   return (
-    <div className="relative w-full font-dmSans border-">
-      <div className=" w-full h-[600px] border flex flex-col">
-        <nav className="w-full h-[80px] items-center flex flex-row justify-between ">
-          <Link
-            to="/"
+    <div className="relative w-full font-dmSans ">
+      <ToastContainer />
+      <div
+        className=" w-full h-[600px] flex flex-col bg-no-repeat bg-cover bg-transparent"
+        style={{
+          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)) , url('${imgUrl}')`,
+        }}
+      >
+        <nav className="relative w-full h-[80px] items-center flex flex-row justify-between ">
+          <button
+            onClick={() => {
+              setSearchFocus(false);
+              navigateTo("/");
+            }}
             className="w-[186px] flex flex-row items-center  ml-[95px] gap-x-[24px]"
           >
             <img className="h-[50px] " src={tv} alt={`${tv} svg`} />
-            <span className="text-[24px] leading[24px] font-dmSans font-[700] text-whit">
+            <span className="text-[24px] leading[24px] font-dmSans font-[700] text-white">
               MovieBox
             </span>
-          </Link>
+          </button>
           <form
             onSubmit={onSearchSubmit}
-            className="w-[525px] h-[36px] px-[6px] py-[10px] flex flex-row justify-between items-center border-[2px] rounded-[6px] bg-slate-400 "
+            className="w-[525px] h-[36px] px-[6px] py-[10px] flex flex-row justify-between items-center border-[2px] rounded-[6px] "
           >
             <input
               type="search"
               value={searchText}
               onChange={OnSearchChange}
+              onFocus={() => setSearchFocus(true)}
               placeholder="what do you want to watch?"
               className="w-full text-[16px] leading-[24px] bg-transparent placeholder:text-white text-white focus-within:outline-none"
             />
@@ -106,7 +146,7 @@ const Home = () => {
               />
             </svg>
           </form>
-          <div className="flex flex-row items-center gap-x-[27px] mr-[95px]">
+          <div className="flex flex-row items-center gap-x-[27px] mr-[95px] text-white">
             <button>Sign in</button>
             <button className="flex flex-row rounded-full bg-rose-700 h-[36px] w-[36px] justify-center items-center">
               <svg
@@ -132,84 +172,81 @@ const Home = () => {
             </button>
           </div>
         </nav>
-        {isPending && (
-          <div className="z-30 absolute top-40 bottom-0 w-full bg-white flex flex-col items-center">
-            <Oval
-              ariaLabel="loading-indicator"
-              height={150}
-              width={150}
-              strokeWidth={5}
-              strokeWidthSecondary={1.5}
-              color="blue"
-              secondaryColor="white"
+
+        {searchFocus && (
+          <div className="z-30 w-full absolute top-40 bottom-0 bg-white flex flex-col items-center">
+            <SearchResult
+              searchResult={searchResult}
+              isPending={isPending}
+              err={searchErr} searchText={searchText}
             />
           </div>
         )}
-        { searchResult && searchResult.length > 0 ? (
-          <div className="z-30 absolute top-40 bg-white flex flex-col items-center">
-            <div className="w-full flex flex-row justify-between items-center px-10 text-lg mb-8">
-              <p className=" text-lg">
-                Showing {searchResult.length} Results for{" "}
-                <span className="font-semibold">{searchText}</span>
-              </p>
-              <button
-                className="text-red-600"
-                onClick={() => setSearchResult(null)}
-              >
-                Clear results
-              </button>
+
+        {heroMovie ? (
+          <div
+            className={`absolute w-[404px] ml-[95px] top-[158px] flex flex-col `}
+          >
+            <h1 className="text-white text-[48px] font-dmSans font-[700] leading-[56px]">
+              {" "}
+              {heroMovie && heroMovie[0].title}{" "}
+            </h1>
+            <div className="flex flex-row gap-x-5 my-2 text[10px] text-white">
+              <div className="flex flex-row gap-x-1">
+                <img src={imdb} alt="imdb image" className="" />
+                <span>860/100</span>
+              </div>
+              <div className=" flex flex-row gap-x-1">
+                <img src={tomato} alt="tomato image" className="" />
+                <span>97</span>
+              </div>
             </div>
-            <SearchResult searchResult={searchResult} />
-          </div>
-        ) : searchResult && searchResult.length===0 && (
-          <div className="z-30 absolute top-40 bottom-0 w-full bg-white flex flex-col items-center">
-            <p className="font-semibold text-lg">
-              No result found for {searchText}
+            <p className="w-[302px] font-500 text-[14px] leading-[18px] text-white">
+              {heroMovie && heroMovie[0].overview}
             </p>
+            <button className=" mt-3 w-[169px] flex flex-row items-center gap-x-[8px] bg-rose-700 rounded-[6px] px-[16px] py-[6px]">
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 16 16"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  fillRule="evenodd"
+                  clipRule="evenodd"
+                  d="M8 16C12.4183 16 16 12.4183 16 8C16 3.58172 12.4183 0 8 0C3.58172 0 0 3.58172 0 8C0 12.4183 3.58172 16 8 16ZM7.5547 5.16795C7.24784 4.96338 6.8533 4.94431 6.52814 5.11833C6.20298 5.29235 6 5.63121 6 6V10C6 10.3688 6.20298 10.7077 6.52814 10.8817C6.8533 11.0557 7.24784 11.0366 7.5547 10.8321L10.5547 8.83205C10.8329 8.64659 11 8.33435 11 8C11 7.66565 10.8329 7.35342 10.5547 7.16795L7.5547 5.16795Z"
+                  fill="white"
+                />
+              </svg>
+              <span className="text-[14px] leading-[24px] font-[700] uppercase text-white">
+                WATCH TRAILER
+              </span>
+            </button>
           </div>
-        )}
-        <div className="absolute w-[404px] ml-[95px] top-[158px] flex flex-col">
-          <h1>John Wick 3: Parabellum</h1>
-          <p className="text[10px]">
-            {" "}
-            <span>860/100</span> <span>97</span>
-          </p>
-          <p className="w-[302px] font-500 text-[14px] leading-[18px] text-whit">
-            John Wick is on the run after killing a member of the internation
-            assassins; guild, and with a $14 million price tag on his head, he
-            is the target of hit men and women everywhere
-          </p>
-          <button className="w-[169px] flex flex-row items-center gap-x-[8px] bg-rose-700 rounded-[6px] px-[16px] py-[6px]">
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 16 16"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
+        ) : !isPending &&(
+          <p className="w-full text-center text-red-400 text-lg mt-20">
+            {heroErr && heroErr} Please
+            <button
+              className="pl-1 underline"
+              onClick={() => window.location.reload()}
             >
-              <path
-                fillRule="evenodd"
-                clipRule="evenodd"
-                d="M8 16C12.4183 16 16 12.4183 16 8C16 3.58172 12.4183 0 8 0C3.58172 0 0 3.58172 0 8C0 12.4183 3.58172 16 8 16ZM7.5547 5.16795C7.24784 4.96338 6.8533 4.94431 6.52814 5.11833C6.20298 5.29235 6 5.63121 6 6V10C6 10.3688 6.20298 10.7077 6.52814 10.8817C6.8533 11.0557 7.24784 11.0366 7.5547 10.8321L10.5547 8.83205C10.8329 8.64659 11 8.33435 11 8C11 7.66565 10.8329 7.35342 10.5547 7.16795L7.5547 5.16795Z"
-                fill="white"
-              />
-            </svg>
-            <span className="text-[14px] leading-[24px] font-[700] uppercase text-white">
-              WATCH TRAILER
-            </span>
-          </button>
-        </div>
+              {" "}
+              try again
+            </button>
+          </p>
+        )}
       </div>
       <section className="w-full mt-[70px] flex flex-col px-[98px]">
-        <div className="w-full  flex flex-row justify-between">
-          <h2 className="font-700 text-[36px] text-black leading-[46.87px]">
-            Feautred Movie
+        <div className="w-full  flex flex-row justify-between mb-8">
+          <h2 className="font-[700] text-[36px] text-black leading-[46.87px]">
+            Featured Movie
           </h2>
           <button className="text-rose-700 text-[18px] leading-[24px] font-[400]">
             See more &gt;{" "}
           </button>
         </div>
-        <MovieCard movieList={topRated} />
+        <MovieCard movieList={topRated} err={err} isPending={isPending} />
       </section>
     </div>
   );
