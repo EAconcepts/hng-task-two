@@ -20,7 +20,7 @@ const Home = () => {
   const [err, setErr] = useState(null);
   const [searchErr, setSearchErr] = useState(null);
   const [heroMovie, setHeroMovie] = useState(null);
-  const notify = (text) => toast(text);
+//   const notify = (text) => toast(text);
   const navigateTo= useNavigate()
   const OnSearchChange = (event) => {
     setSearchText(event.target.value);
@@ -34,7 +34,6 @@ const Home = () => {
   const onSearchSubmit = () => {
     event.preventDefault();
     setIsPending(true);
-    console.log(searchText);
     if (searchText.length > 0) {
       axios
         .get(`https://api.themoviedb.org/3/search/movie?query=${searchText}`, {
@@ -42,13 +41,11 @@ const Home = () => {
         })
         .then((response) => {
           if (response.status === 200) {
-            console.log(response);
             setSearchResult(response.data.results);
             setIsPending(false);
           }
         })
         .catch((error) => {
-          console.log(error);
           setSearchErr(`${error.message}!`)
           setIsPending(false);
         });
@@ -60,12 +57,10 @@ const Home = () => {
         headers,
       })
       .then((response) => {
-        console.log(response);
         setHeroMovie(response.data.results);
       })
       .catch((error) => {
         setHeroErr(`${error.message}!`)
-        console.log(error);
       });
   }, []);
   useEffect(() => {
@@ -77,49 +72,42 @@ const Home = () => {
       )
       .then((response) => {
         if (response.status === 200) {
-          console.log(response);
           setTopRated(response.data.results.slice(0, 10));
         } 
         setIsPending(false)
       })
       .catch((error) =>{ console.log(error)
-        // let text = `${error.message}!`;
         setErr(`${error.message}!`)
-        // notify(text);
         setIsPending(false)
     });
   }, []);
-  console.log(searchResult);
 
-  let imgUrl = `https://image.tmdb.org/t/p/original${
-    heroMovie && heroMovie[0].backdrop_path
-  }`;
-  console.log(imgUrl);
+  let imgUrl = `https://image.tmdb.org/t/p/original${heroMovie && heroMovie[0].backdrop_path}`;
+
   return (
     <div className="relative w-full font-dmSans ">
-      <ToastContainer />
       <div
-        className=" w-full h-[600px] flex flex-col bg-no-repeat bg-cover bg-transparent"
+        className="w-full h-[600px] flex flex-col bg-no-repeat bg-top  bg-cover bg-transparent"
         style={{
           backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)) , url('${imgUrl}')`,
         }}
       >
-        <nav className="relative w-full h-[80px] items-center flex flex-row justify-between ">
+        <nav className={`relative w-full h-[80px] items-center flex flex-row justify-between px-2 sm:px-[60px] `}>
           <button
             onClick={() => {
               setSearchFocus(false);
               navigateTo("/");
             }}
-            className="w-[186px] flex flex-row items-center  ml-[95px] gap-x-[24px]"
+            className="w-[186px] flex flex-row items-center sm:ml[95px] gap-x-2 sm:gap-x-[24px]"
           >
-            <img className="h-[50px] " src={tv} alt={`${tv} svg`} />
-            <span className="text-[24px] leading[24px] font-dmSans font-[700] text-white">
+            <img className="h-[40px] sm:h-[50px] " src={tv} alt={`${tv} svg`} />
+            <span className={`text-sm sm:text-[24px] leading[24px] font-dmSans font-[700] text-white ${searchFocus && 'hidden'}`}>
               MovieBox
             </span>
           </button>
           <form
             onSubmit={onSearchSubmit}
-            className="w-[525px] h-[36px] px-[6px] py-[10px] flex flex-row justify-between items-center border-[2px] rounded-[6px] "
+            className={`w-28 sm:w-[300px] lg:w-[525px] h-[36px] mr-2 sm:mr-0 px-[6px] py-[10px] sm:flex flex-row justify-between items-center border-[2px] rounded-[6px] ${searchFocus && 'w-[570px] border'} `}
           >
             <input
               type="search"
@@ -127,10 +115,11 @@ const Home = () => {
               onChange={OnSearchChange}
               onFocus={() => setSearchFocus(true)}
               placeholder="what do you want to watch?"
-              className="w-full text-[16px] leading-[24px] bg-transparent placeholder:text-white text-white focus-within:outline-none"
+              className={`w-full text-[16px] leading-[24px] bg-transparent placeholder:text-white text-white focus-within:outline-none` }
             />
             <svg
               onClick={onSearchSubmit}
+              className={`-mt-6 sm:mt-0 ml-[70px] sm:ml-0 ${searchFocus && 'hidden'}`}
               width="16px"
               height="16px"
               viewBox="0 0 14 14"
@@ -146,8 +135,8 @@ const Home = () => {
               />
             </svg>
           </form>
-          <div className="flex flex-row items-center gap-x-[27px] mr-[95px] text-white">
-            <button>Sign in</button>
+          <div className="flex flex-row items-center gap-x-[27px] sm:mr[95px] text-white">
+            <button className="hidden sm:block">Sign in</button>
             <button className="flex flex-row rounded-full bg-rose-700 h-[36px] w-[36px] justify-center items-center">
               <svg
                 width="18"
@@ -174,7 +163,7 @@ const Home = () => {
         </nav>
 
         {searchFocus && (
-          <div className="z-30 w-full absolute top-40 bottom-0 bg-white flex flex-col items-center">
+          <div className="z-30 w-full absolute top-20 sm:top-40 bottom-0 bg-white flex flex-col items-center">
             <SearchResult
               searchResult={searchResult}
               isPending={isPending}
@@ -185,13 +174,13 @@ const Home = () => {
 
         {heroMovie ? (
           <div
-            className={`absolute w-[404px] ml-[95px] top-[158px] flex flex-col `}
+            className={`sm:absolute  w-[200px] sm:w-[404px] mx-5 sm:mx-0 sm:ml-[95px] mt-8 sm:mt-0  sm:top-[158px] flex flex-col `}
           >
-            <h1 className="text-white text-[48px] font-dmSans font-[700] leading-[56px]">
+            <h1 className="text-white text-[36px] sm:text-[48px] font-dmSans font-[700] leading-[56px]">
               {" "}
               {heroMovie && heroMovie[0].title}{" "}
             </h1>
-            <div className="flex flex-row gap-x-5 my-2 text[10px] text-white">
+            <div className="flex flex-row gap-x-5 my-2 text-xs sm:text[10px] text-white">
               <div className="flex flex-row gap-x-1">
                 <img src={imdb} alt="imdb image" className="" />
                 <span>860/100</span>
@@ -201,7 +190,7 @@ const Home = () => {
                 <span>97</span>
               </div>
             </div>
-            <p className="w-[302px] font-500 text-[14px] leading-[18px] text-white">
+            <p className=" w-[280px] sm:w-[302px] font-500 text-[14px] leading-[18px] text-white">
               {heroMovie && heroMovie[0].overview}
             </p>
             <button className=" mt-3 w-[169px] flex flex-row items-center gap-x-[8px] bg-rose-700 rounded-[6px] px-[16px] py-[6px]">
@@ -237,12 +226,12 @@ const Home = () => {
           </p>
         )}
       </div>
-      <section className="w-full mt-[70px] flex flex-col px-[98px]">
+      <section className=" w-full mt-[70px] flex flex-col px-2 sm:px-[98px]">
         <div className="w-full  flex flex-row justify-between mb-8">
-          <h2 className="font-[700] text-[36px] text-black leading-[46.87px]">
+          <h2 className="font-[700] text-[18px] sm:text-[36px] text-black leading-[46.87px]">
             Featured Movie
           </h2>
-          <button className="text-rose-700 text-[18px] leading-[24px] font-[400]">
+          <button className="text-rose-700 text-[12px] sm:text-[18px] leading-[24px] font-[400]">
             See more &gt;{" "}
           </button>
         </div>

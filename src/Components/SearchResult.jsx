@@ -9,13 +9,13 @@ const SearchResult = ({searchResult, isPending, err , searchText}) => {
       <>
         {
         searchResult && searchResult.length > 0 && (
-        <div className="w-full flex flex-row justify-between items-center px-10 text-lg mb-8">
-          <p className=" text-lg">
+        <div className="w-full flex flex-row justify-between items-center px-2 sm:px-10 text-lg mb-8">
+          <p className="text-sm sm:text-lg">
             Showing {searchResult && searchResult.length} Results for{" "}
             <span className="font-semibold">{searchText && searchText}</span>
           </p>
           <button
-            className="text-red-600"
+            className="text-xs sm:text-base text-red-600"
             onClick={() => setSearchResult(null)}
           >
             Clear results
@@ -23,7 +23,7 @@ const SearchResult = ({searchResult, isPending, err , searchText}) => {
         </div>
         )}
 
-        <div className="w-[95%] px-10 flex flex-row">
+        <div className="sm:w-[95%] px-10 flex flex-row">
           <MovieCard movieList={searchResult} isPending={isPending} err={err} />
         </div>
       </>

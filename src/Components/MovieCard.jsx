@@ -5,7 +5,7 @@ import imdb from "../assets/imdb.svg";
 import tomato from "../assets/tomato.svg";
 
 const MovieCard = ({movieList, err, isPending}) => {
-  console.log(movieList)
+  // console.log(movieList)
   return (
     <div className="w-full">
       {isPending && (
@@ -22,21 +22,33 @@ const MovieCard = ({movieList, err, isPending}) => {
         </div>
       )}
       {movieList ? (
-        <div className="w-full grid grid-cols-4 gap-x-12 gap-y-20 font-dmSans">
+        <div className="w-full grid grid-cols-1 sm:grid-cols-2 place-items-center lg:grid-cols-3 xl:grid-cols-4 sm:gap-x-12 gap-y-10 sm:gap-y-20 font-dmSans">
           {movieList.map((movie) => (
-            <Link to={`/movies/${movie.id}`} key={movie.id}>
+            <Link
+              to={`/movies/${movie.id}`}
+              key={movie.id}
+              data-testid="movie-card"
+              className=' w-[250px]  flex flex-col '
+            >
               <img
                 src={`https://image.tmdb.org/t/p/original${movie.poster_path}`}
                 alt={`${movie.title} image`}
-                className="w-[250px] h-[370px]"
+                className="bg-cover w-[250px] h-[310px] sm:h-[370px]"
+                data-testid="movie-poster"
               />
-              <small className="text-[#9CA3AF] font-[700] text-[12px] leading-[15.62px]">
-                USA 2018 - 2008
+              <small className="mt-1 text-[#9CA3AF] font-[700] text-[12px] leading-[15.62px]">
+                USA{" "}
+                <span className="" data-testid="movie-release-date">
+                  {movie.release_date.substring(0, 4)}
+                </span>
               </small>
-              <h3 className="font-[700] text-[18px] leading-[23.44px] text-gray-900">
-                Batman Begins {movie.title}
+              <h3
+                className="font-[700] text-sm sm:text-[18px] leading-[23.44px] text-gray-900"
+                data-testid="movie-title"
+              >
+                 {movie.title}
               </h3>
-              <div className="w-full flex flex-row justify-between items-center text-[#111827] text-[12px] font-[400] leading-[12px]">
+              <div className="w-full flex flex-row justify-between items-center text-[#111827] text-xs sm:text-[12px] font-[400] leading-[12px]">
                 <div className="flex flex-row gap-x-2 items-center">
                   <img src={imdb} alt="imdb image" className="" />
                   <span> 860 / 100</span>
@@ -46,7 +58,7 @@ const MovieCard = ({movieList, err, isPending}) => {
                   <span> 860 / 100</span>
                 </div>
               </div>
-              <small className="text-[#9CA3AF] text-[12px] leading-[15.62px] font-[700]">
+              <small className="mt-1 text-[#9CA3AF] text-xs sm:text-[12px] leading-[15.62px] font-[700]">
                 Action, Adventure
               </small>
             </Link>
