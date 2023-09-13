@@ -167,7 +167,11 @@ const Home = () => {
             <SearchResult
               searchResult={searchResult}
               isPending={isPending}
-              err={searchErr} searchText={searchText}
+              err={searchErr} 
+              searchText={searchText}
+              setSearchResult={setSearchResult}
+              setSearchFocus={setSearchFocus}
+              setSearchText={setSearchText}
             />
           </div>
         )}
