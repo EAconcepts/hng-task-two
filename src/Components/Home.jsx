@@ -2,11 +2,8 @@ import React, { useEffect, useState } from "react";
 import tv from "../assets/tv.svg";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { toast, ToastContainer } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css'
 import SearchResult from "./SearchResult";
 import MovieCard from "./MovieCard";
-import { Oval } from "react-loader-spinner";
 import imdb from "../assets/imdb.svg";
 import tomato from "../assets/tomato.svg";
 
@@ -20,7 +17,6 @@ const Home = () => {
   const [err, setErr] = useState(null);
   const [searchErr, setSearchErr] = useState(null);
   const [heroMovie, setHeroMovie] = useState(null);
-//   const notify = (text) => toast(text);
   const navigateTo= useNavigate()
   const OnSearchChange = (event) => {
     setSearchText(event.target.value);
@@ -107,7 +103,7 @@ const Home = () => {
           </button>
           <form
             onSubmit={onSearchSubmit}
-            className={`w-28 sm:w-[300px] lg:w-[525px] h-[36px] mr-2 sm:mr-0 px-[6px] py-[10px] sm:flex flex-row justify-between items-center border-[2px] rounded-[6px] ${searchFocus && 'w-[570px] border'} `}
+            className={`w-36 sm:w-[300px] lg:w-[525px] h-[36px] mr-2 sm:mr-0 px-[6px] py-[10px] sm:flex flex-row justify-between items-center border-[2px] rounded-[6px] ${searchFocus && 'w-[410px] sm:w-[570px] border'} `}
           >
             <input
               type="search"
@@ -119,7 +115,7 @@ const Home = () => {
             />
             <svg
               onClick={onSearchSubmit}
-              className={`-mt-6 sm:mt-0 ml-[70px] sm:ml-0 ${searchFocus && 'hidden'}`}
+              className={`-mt-6 sm:mt-0 ml-[115px] sm:ml-0 ${searchFocus && 'hidden'}`}
               width="16px"
               height="16px"
               viewBox="0 0 14 14"
@@ -161,7 +157,6 @@ const Home = () => {
             </button>
           </div>
         </nav>
-
         {searchFocus && (
           <div className="z-30 w-full absolute top-20 sm:top-40 bottom-0 bg-white flex flex-col items-center">
             <SearchResult

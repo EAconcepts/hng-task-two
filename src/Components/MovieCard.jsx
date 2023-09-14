@@ -5,7 +5,7 @@ import imdb from "../assets/imdb.svg";
 import tomato from "../assets/tomato.svg";
 
 const MovieCard = ({movieList, err, isPending}) => {
-  // console.log(movieList)
+  console.log(movieList)
   return (
     <div className="w-full">
       {isPending && (
@@ -39,7 +39,9 @@ const MovieCard = ({movieList, err, isPending}) => {
               <small className="mt-1 text-[#9CA3AF] font-[700] text-[12px] leading-[15.62px]">
                 USA{" "}
                 <span className="" data-testid="movie-release-date">
-                  {movie.release_date.substring(0, 4)}
+                  {
+                  new Date(movie.release_date).toUTCString()
+                  }
                 </span>
               </small>
               <h3
@@ -51,11 +53,11 @@ const MovieCard = ({movieList, err, isPending}) => {
               <div className="w-full flex flex-row justify-between items-center text-[#111827] text-xs sm:text-[12px] font-[400] leading-[12px]">
                 <div className="flex flex-row gap-x-2 items-center">
                   <img src={imdb} alt="imdb image" className="" />
-                  <span> 860 / 100</span>
+                  <span> {(movie.vote_average *10).toFixed(1)} / 100</span>
                 </div>
                 <div className="flex flex-row gap-x-2 items-center">
                   <img src={tomato} alt="tomato image" className="" />
-                  <span> 860 / 100</span>
+                  <span> {(movie.vote_average*10) - 8}%</span>
                 </div>
               </div>
               <small className="mt-1 text-[#9CA3AF] text-xs sm:text-[12px] leading-[15.62px] font-[700]">

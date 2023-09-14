@@ -35,8 +35,8 @@ const MovieDetails = () => {
         setIsPending(false);
       });
   }, []);
-  const utcDate = new Date(movieDetail && movieDetail.release_date + "T00:00:00Z");
-  let newDate = utcDate.getUTCDate();
+  const localdate = new Date(movieDetail && movieDetail.release_date);
+  let utcDate = localdate.toUTCString();
   console.log(utcDate);
   return (
     <div className="relative w-full flex sm:flex-row sm:gap-x-12 font-dmSans">
@@ -65,20 +65,18 @@ const MovieDetails = () => {
           <div className=" w-full flex flex-col sm:flex-row gap-x-4 mt-5 px-2 sm:px-8 font-poppins">
             <div className="flex flex-col w-full">
               <div className="flex flex-col sm:flex-row sm:items-center  font-poppins ">
-                <h3
-                  className="text-sm sm:text-base lg:text-[24px] font-[700] sm:leading-[34.5px]"
-                  data-testid="movie-title"
-                >
-                  {movieDetail.title} .{" "}
+                <div className="text-sm sm:text-base lg:text-[24px] font-[700] sm:leading-[34.5px]">
+                  <span data-testid="movie-title">{movieDetail.title}</span>
+                  <span> . </span>
                   <span className="" data-testid="movie-release-date">
-                    {movieDetail.release_date}{" "}
+                    {utcDate}
                   </span>
-                  . PG-13 .{" "}
+                  <span> . PG-13 . </span>
                   <span className="" data-testid="movie-runtime">
-                    {" "}
-                    {movieDetail.runtime}mins
+                    {movieDetail.runtime}
                   </span>
-                </h3>
+                  <span> mins</span>
+                </div>
                 <div className="flex flex-row gap-x-2 sm:items-center ">
                   {movieDetail &&
                     movieDetail.genres.map((genre, index) => (
