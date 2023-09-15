@@ -6,6 +6,7 @@ import SearchResult from "./SearchResult";
 import MovieCard from "./MovieCard";
 import imdb from "../assets/imdb.svg";
 import tomato from "../assets/tomato.svg";
+import Footer from "../Footer";
 
 const Home = () => {
   const [searchText, setSearchText] = useState("");
@@ -236,6 +237,7 @@ const Home = () => {
         </div>
         <MovieCard movieList={topRated} err={err} isPending={isPending} />
       </section>
+      <Footer/>
     </div>
   );
 };
